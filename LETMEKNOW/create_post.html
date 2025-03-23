@@ -1,0 +1,18 @@
+{% extends 'basicOxide.html' %}
+
+{% block content %}
+    <h1>This is create post page</h1>
+    <form action="/create_post" method="POST">
+        <div>
+            <label>Title:</label>
+            <input type='text' name='title' value='Title'>
+        </div>
+        <div>
+            <label>Content:</label>
+            <textarea name='content'>Default content</textarea> 
+        </div>
+        <div>
+            <input type='submit' value='Push Post'>
+        </div>
+    </form>
+{% endblock %}

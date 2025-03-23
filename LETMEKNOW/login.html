@@ -1,0 +1,17 @@
+{% extends 'basicOxide.html' %}
+
+{% block content %}
+    <form action="/login" method="POST">
+        <div>
+            <label>Username:</label>
+            <input type="text" name="name" value=" ">
+        </div>
+        <div>
+            <label>Pass:</label>
+            <input type="password" name="password" value="">
+        </div>
+        <div>
+            <input type="submit" value="Login">
+        </div>
+    </form>
+{% endblock %}

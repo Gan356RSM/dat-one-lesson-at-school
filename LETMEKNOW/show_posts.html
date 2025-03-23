@@ -1,0 +1,9 @@
+{% extends 'basicOxide.html' %}
+
+{% block content %}
+    <h1>This is show posts page</h1>
+    {% for p in blog_posts %}
+        <h1>{{p.title}}</h1>
+        <a href="/show_posts?pid={{p.pid}}">Read more</a>
+    {% endfor %}
+{% endblock %}
