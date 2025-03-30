@@ -10,7 +10,7 @@ blog_posts = [
               },
               {"pid": 1,
                "title": "Mahito",
-               "content": "I'm~ I'M TRULY- A CURSE!!! BLACK FLASH."
+               "content": "I'm- I'M TRULY- A CURSE!!! BLACK FLASH."
               }
              ]
 
