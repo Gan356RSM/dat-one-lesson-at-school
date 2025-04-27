@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, flash, g
-import os
 import sqlite3
+import os
 
 def open_db():
     if not 'db' in g:
@@ -8,24 +8,19 @@ def open_db():
     return g.db
 
 '''
-users = [ {"uid": 0, "name": "tim", "password": "password1" }, 
-          {"uid": 1, "name": "jim", "password": "password2" }]
-'''
+users = [ {"uid": 0, "name": "Mahito", "password": "Idle_Transfigure" }]
 
 blog_posts = [
               {"pid": 0,
-               "title": "A Post About Cats",
-               "content": "Cats are cool.  I like cats"
+               "title": "Nanami",
+               "content": "I can't allow this fight to go overtime."
               },
               {"pid": 1,
-               "title": "A Post About Dogs",
-               "content": "Dogs are cool.  I like dogs"
-              },
-              {"pid": 2,
-               "title": "A Post About Birds",
-               "content": "Birds are cool.  I like birds"
+               "title": "Mahito",
+               "content": "I'm- I'M TRULY- A CURSE!!! BLACK FLASH."
               }
              ]
+'''
 
 def index():
     return render_template("index.html")
@@ -34,33 +29,43 @@ def show_posts():
     value = request.args.get("pid")
     if value == None:
         #localhost:5000/show_posts
-        return render_template("show_posts.html", blog_posts=blog_posts)
+        db = open_db()
+        post = db.execute("SELECT title, content FROM posts").fetchall()
+        return render_template("show_posts.html", blog_posts=post)
     else:
         #localhost:5000/show_posts?pid=0
         #localhost:5000/show_posts?pid=1
         #...
-        pid = int(value)
-        for p in blog_posts:
-            if p["pid"] == pid:
-                return render_template("post.html", blog_data=p)
-
-        return render_template("show_posts.html", blog_posts=blog_posts)
+        db = open_db()
+        post = db.execute("SELECT rowid, title, content FROM posts").fetchall()
+        
+        for p in post:
+            if p[0] == db.execute("SELECT rowid FROM posts").fetchall()[0][0]:
+                main_post = db.execute("SELECT rowid, title, content FROM posts").fetchall()[p[0]-1]
+                print(type(main_post))
+                print(main_post)
+                print("WTF")
+                return render_template("post.html", blog_data=main_post)
+        return render_template("show_posts.html", blog_posts=post)
+        
 
 def create_post():
+    pass
+    '''
     if request.method == "POST":
-        if session.get('uid') == None:
-            flash("Log in to make a post") 
-            return redirect("/login")
-
+        db = open_db()
+        post = db.execute("SELECT title, content FROM posts")
         title = request.form["title"]
         content = request.form["content"]
-        blog_post = { "pid": len(blog_posts), "content": content, "title": title }
+
+        
+        blog_post = { "pid": rowid, "content": content, "title": title }
         blog_posts.append(blog_post)
         return redirect("/show_posts?pid=" + str(blog_post["pid"]))
     else:
         return render_template("create_post.html")
+    '''
 
-#sign page
 def account():
     if request.method == "POST":
         name = request.form["name"]
@@ -81,39 +86,36 @@ def login():
         name = request.form["name"]
         password = request.form["password"]
         
-        error = "Incorrect credentials"
+        error = "Error Idioto"
         uid = -1
         db = open_db()
         results = db.execute("SELECT rowid, username, password FROM accounts").fetchall()
         for row in results:
             if row[1] == name and row[2] == password:
                 error = None
-                uid = row[0]
-
-        if error is None:
+                uid = int(row[0])
+        if error == None:
             session.clear()
-            session['uid'] = uid
-            flash(error)
+            session["uid"] = str(uid)
             return redirect("/")
         else:
             flash(error)
             return render_template("login.html")
-
     else:
         return render_template("login.html")
 
 def logout():
-    session.clear() 
+    session.clear()
     return redirect("/")
 
 app = Flask(__name__, template_folder=os.getcwd(), static_folder=os.getcwd())
-app.config.from_mapping(SECRET_KEY='my_dev_key')
+app.config.from_mapping(SECRET_KEY="my_dev_key")
 
 app.add_url_rule("/", "index", index)
 app.add_url_rule("/show_posts", "show_posts", show_posts)
 app.add_url_rule("/create_post", "create_post", create_post, methods=["GET", "POST"])
 app.add_url_rule("/account", "account", account)
-app.add_url_rule("/login", "login", login, methods=["GET", "POST"])
+app.add_url_rule("/login", "login", login, methods=["GET","POST"])
 app.add_url_rule("/logout", "logout", logout, methods=["POST"])
-app.run()
 
+app.run()
